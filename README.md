@@ -1,3 +1,3 @@
 # home-assistant-custom-components
 
-This is just a repository for the custom components i've developed.
+This is just a repository for home assistant custom components developed by me.
