@@ -14,7 +14,7 @@ from homeassistant.helpers.entity_component import EntityComponent
 from homeassistant.util import Throttle
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
-REQUIREMENTS = ['pyEstradasPT==1.0.0']
+REQUIREMENTS = ['pyEstradasPT==1.0.2']
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -45,7 +45,9 @@ async def async_setup(hass, config):
        
     for camera in conf[0].get(CONF_CAMERA):
         url = await cameras.UrlByCameraName(camera)
-        entities.append(CameraVideo(camera,'/config/www/'+re.sub('[^A-Za-z0-9]+', '', camera)+'.3gp',url))
+        file_name='/config/www/'+re.sub('[^A-Za-z0-9]+', '', camera)+'.3gp'
+        entities.append(CameraVideo(camera,file_name,url))
+        await store_cam_video(url, file_name)
 
     await component.async_add_entities(entities)
    
@@ -54,8 +56,7 @@ async def async_setup(hass, config):
 
 async def store_cam_video(url, file_name):
     """Save camera 3gp """
-    
-    await urllib.request.urlretrieve(url, file_name)
+    urllib.request.urlretrieve(url, file_name)
 
 
 
@@ -67,22 +68,14 @@ class CameraVideo(Entity):
     def __init__(self, name, file_name, url):
         """Initialize the component."""
         self._name = name
-#        self._state = unknown
         self._file_name = file_name
         self._url = url
         self._last_update = datetime.now()
         
-        store_cam_video(self._url, self._file_name)
-
     @property
     def name(self):
         """Return the name of the component."""
         return self._name
-
-#    @property
-#    def state(self):
-#        """Return the state of the component."""
-#        return self._state
 
     @property
     def file_name(self):
@@ -116,9 +109,8 @@ class CameraVideo(Entity):
 
     @Throttle(SCAN_INTERVAL)
     async def async_update(self):
-        """Update the sensor."""
-        with async_timeout.timeout(10, loop=self.hass.loop):
-            store_cam_video(self._name, self._file_name)
+        """Update the cam."""
+        await store_cam_video(self._url, self._file_name)
 
         self._last_update = datetime.now()
         self.schedule_update_ha_state()
