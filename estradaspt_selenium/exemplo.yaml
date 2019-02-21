@@ -1,0 +1,27 @@
+shell_command:
+  setup_estradaspt: apk --update add chromium chromium-chromedriver && cp -av /usr/bin/chromium-browser /usr/bin/google-chrome
+
+automation:
+  - id: 'estradaspt'
+    alias: setup_estradaspt
+    initial_state: 'on'
+    trigger:
+    - event: start
+      platform: homeassistant
+    condition: []
+    action:
+    - service: shell_command.setup_estradaspt
+
+
+estradaspt:
+  camera:
+    - 'AEDL - A20 9+840C CV727' 
+    - '2ª Circular, km 3 - Radar Aeroporto'
+
+camera:
+  - platform: ffmpeg
+    name: testCam3
+    input: http://192.168.1.145:8123/local/AEDLA209840CCV727.3gp
+  - platform: ffmpeg
+    name: testCam2
+    input: http://192.168.1.145:8123/local/2Circularkm3RadarAeroporto.3gp
