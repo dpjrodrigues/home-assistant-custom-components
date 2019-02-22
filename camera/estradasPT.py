@@ -31,7 +31,7 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
     vol.Optional(CONF_NAME, default=DEFAULT_NAME): cv.string,
 })
 
-SCAN_INTERVAL = timedelta(minutes=5)
+SCAN_INTERVAL = timedelta(minutes=1)
 
 
 async def async_setup_platform(hass, config, async_add_entities,
@@ -55,7 +55,6 @@ class FFmpegCamera(Camera):
         """Initialize a FFmpeg camera."""
         super().__init__()
 
-        self._hass = hass
         self._manager = hass.data[DATA_FFMPEG]
         self._name = config.get(CONF_NAME)
         self._cam_name = config.get(CONF_INPUT)
@@ -79,6 +78,7 @@ class FFmpegCamera(Camera):
         """Generate an HTTP MJPEG stream from the camera."""
         from haffmpeg import CameraMjpeg
 
+        await self.async_update()
         stream = CameraMjpeg(self._manager.binary, loop=self.hass.loop)
         await stream.open_camera(
             self._input, extra_cmd=self._extra_arguments)
@@ -109,7 +109,7 @@ class FFmpegCamera(Camera):
     async def async_update(self):
         """Update the cam."""
 
-        websession = async_get_clientsession(self._hass)
+        websession = async_get_clientsession(self.hass)
         #    with async_timeout.timeout(10, loop=hass.loop):
         cams = await Cameras.get(websession) 
        
