@@ -16,8 +16,6 @@ from homeassistant.components.ffmpeg import (
 import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.aiohttp_client import (
     async_aiohttp_proxy_stream, async_get_clientsession)
-from pyEstradasPT import Cameras
-
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -39,6 +37,8 @@ async def async_setup_platform(hass, config, async_add_entities,
     """Set up a FFmpeg camera."""
 
     websession = async_get_clientsession(hass)
+
+    from pyEstradasPT import Cameras
 #    with async_timeout.timeout(10, loop=hass.loop):
     cams = await Cameras.get(websession) 
        
@@ -110,6 +110,8 @@ class FFmpegCamera(Camera):
         """Update the cam."""
 
         websession = async_get_clientsession(self.hass)
+        
+        from pyEstradasPT import Cameras
         #    with async_timeout.timeout(10, loop=hass.loop):
         cams = await Cameras.get(websession) 
        
