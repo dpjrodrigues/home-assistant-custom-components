@@ -22,11 +22,13 @@ _LOGGER = logging.getLogger(__name__)
 REQUIREMENTS = ['pyEstradasPT==1.0.2']
 DEPENDENCIES = ['ffmpeg']
 DEFAULT_NAME = 'estradas_pt'
+IMAGE_REFRESH = 'image_refresh_in_min'
 
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
     vol.Required(CONF_INPUT): cv.string,
     vol.Optional(CONF_EXTRA_ARGUMENTS): cv.string,
     vol.Optional(CONF_NAME, default=DEFAULT_NAME): cv.string,
+    vol.Optional(IMAGE_REFRESH, default=1): cv.positive_int,
 })
 
 SCAN_INTERVAL = timedelta(minutes=1)
@@ -60,6 +62,22 @@ class EstradasCamera(FFmpegCamera):
         self._token_changed = True
         self._extra_arguments = config.get(CONF_EXTRA_ARGUMENTS)
         self._last_update = datetime.now()
+        self._last_image = None
+        self._image_refresh = config.get(IMAGE_REFRESH)
+        self._last_image_refresh = datetime.now()
+
+    async def async_camera_image(self):
+        """Return a still image response from the camera."""
+        await self.async_update()
+        
+        d = (datetime.now()-self._last_image_refresh)
+        ds = d.days * 86400 + d.seconds
+
+        if (self._last_image == None or len(self._last_image) < 5 or ds >= self._image_refresh*60 ):
+            self._last_image = await super().async_camera_image()
+            self._last_image_refresh = datetime.now()
+
+        return self._last_image
 
     async def handle_async_mjpeg_stream(self, request):
         """Generate an HTTP MJPEG stream from the camera."""
