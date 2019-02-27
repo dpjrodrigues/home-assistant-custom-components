@@ -28,7 +28,7 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
     vol.Required(CONF_INPUT): cv.string,
     vol.Optional(CONF_EXTRA_ARGUMENTS): cv.string,
     vol.Optional(CONF_NAME, default=DEFAULT_NAME): cv.string,
-    vol.Optional(IMAGE_REFRESH, default=1): cv.positive_int,
+    vol.Optional(IMAGE_REFRESH, default=5): cv.positive_int,
 })
 
 SCAN_INTERVAL = timedelta(minutes=1)
@@ -92,6 +92,8 @@ class EstradasCamera(FFmpegCamera):
         attrs["last_update"] = self._last_update
         attrs["token_changed"] = self._token_changed
         attrs["url"] = self._input
+        attrs["image_refresh_in_min"] = self._image_refresh
+        attrs["last_image_refresh"] = self._last_image_refresh
         return attrs 
 
     @Throttle(SCAN_INTERVAL)
