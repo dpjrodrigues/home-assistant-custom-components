@@ -22,7 +22,7 @@ from homeassistant.core import callback
 from homeassistant.helpers.event import async_track_state_change
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
-REQUIREMENTS = ['pyCTT==1.0.0']
+REQUIREMENTS = ['pyCTT==1.0.1']
 DEPENDENCIES = ['input_text']
 
 _LOGGER = logging.getLogger(__name__)
@@ -30,18 +30,21 @@ _LOGGER = logging.getLogger(__name__)
 ATTRIBUTION = "Powered by CTT.pt"
 TRACKING_IDS = 'tracking_ids'
 CONF_SOURCE_INPUT = 'input_entity_id'
+CONF_STATE_TO_COUNT = 'state_to_count'
 SCAN_INTERVAL = timedelta(minutes=5)
 
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
     vol.Optional(CONF_NAME, default="CTT Tracker"): cv.string,
-    vol.Required(CONF_SOURCE_INPUT):cv.entity_id
+    vol.Required(CONF_SOURCE_INPUT):cv.entity_id,
+    vol.Optional(CONF_STATE_TO_COUNT): cv.string
 })
 
 
 async def async_setup_platform(hass, config, add_entities, discovery_info=None):
     """Set up the Tube sensor."""
 
-    sensor = CTTSensor(config.get(CONF_NAME), config.get(CONF_SOURCE_INPUT),hass.states.get(config.get(CONF_SOURCE_INPUT)).state)
+    sensor = CTTSensor(config.get(CONF_NAME), config.get(CONF_SOURCE_INPUT),
+        hass.states.get(config.get(CONF_SOURCE_INPUT)).state, config.get(CONF_STATE_TO_COUNT) )
     add_entities([sensor], True)
 
 class CTTSensor(Entity):
@@ -49,13 +52,15 @@ class CTTSensor(Entity):
 
     ICON = 'mdi:package-variant-closed'
 
-    def __init__(self, name, source_input, tracking_ids):
+    def __init__(self, name, source_input, tracking_ids, state_to_count):
         """Initialize the sensor."""
         self._name = name
         self._source_input = source_input
         self._tracking_ids = tracking_ids
+        self._state_to_count = state_to_count
         self._state = 0
         self._delivered = 0
+        self._not_delivered = 0
         self._details = {}
         
     async def async_added_to_hass(self):
@@ -103,7 +108,7 @@ class CTTSensor(Entity):
         attrs = {}
 
         attrs["Number of Items Delivered"] = self._delivered
-        attrs["Number of Items Not Delivered"] = self._state
+        attrs["Number of Items Not Delivered"] = self._not_delivered
         for item in self._details:
             attrs[item.id]=item.state+" at "+item.date+" "+item.hour
         return attrs
@@ -117,6 +122,11 @@ class CTTSensor(Entity):
         with async_timeout.timeout(10, loop=self.hass.loop):          
             data = await Items.get(websession,self._tracking_ids)
 
-        self._state = await data.number_of_items_not_delivered()
+        self._not_delivered = await data.number_of_items_not_delivered()
+        if(self._state_to_count is None):
+            self._state = self._not_delivered
+        else:
+            self._state = await data.number_of_items_in_state(self._state_to_count)
+
         self._delivered = await data.number_of_items_delivered()
         self._details = await data.full_list()
