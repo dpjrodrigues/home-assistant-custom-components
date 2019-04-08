@@ -10,7 +10,7 @@ import voluptuous as vol
 from datetime import datetime, timedelta
 from homeassistant.util import Throttle
 from homeassistant.const import CONF_NAME
-from homeassistant.components.camera.ffmpeg import FFmpegCamera, PLATFORM_SCHEMA
+from homeassistant.components.ffmpeg.camera import FFmpegCamera, PLATFORM_SCHEMA
 from homeassistant.components.ffmpeg import (
     DATA_FFMPEG, CONF_INPUT, CONF_EXTRA_ARGUMENTS)
 import homeassistant.helpers.config_validation as cv
