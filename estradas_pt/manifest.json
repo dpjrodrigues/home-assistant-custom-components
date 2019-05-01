@@ -1,0 +1,8 @@
+{
+  "domain": "EstradasPT",
+  "name": "Camaras Estradas PT",
+  "documentation": "",
+  "dependencies": ["ffmpeg"],
+  "codeowners": ["@dpjrodrigues"],
+  "requirements": ["pyEstradasPT==1.0.2"]
+}

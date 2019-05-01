@@ -1,0 +1,8 @@
+{
+  "domain": "CTT",
+  "name": "CTT tracker",
+  "documentation": "",
+  "dependencies": ["input_text"],
+  "codeowners": ["@dpjrodrigues"],
+  "requirements": ["pyCTT==1.0.1"]
+}
