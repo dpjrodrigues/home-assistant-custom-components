@@ -19,8 +19,6 @@ from homeassistant.helpers.aiohttp_client import (
 
 _LOGGER = logging.getLogger(__name__)
 
-REQUIREMENTS = ['pyEstradasPT==1.0.2']
-DEPENDENCIES = ['ffmpeg']
 DEFAULT_NAME = 'estradas_pt'
 IMAGE_REFRESH = 'image_refresh_in_min'
 

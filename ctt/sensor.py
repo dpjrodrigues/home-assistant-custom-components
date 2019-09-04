@@ -22,9 +22,6 @@ from homeassistant.core import callback
 from homeassistant.helpers.event import async_track_state_change
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
-REQUIREMENTS = ['pyCTT==1.0.1']
-DEPENDENCIES = ['input_text']
-
 _LOGGER = logging.getLogger(__name__)
 
 ATTRIBUTION = "Powered by CTT.pt"
