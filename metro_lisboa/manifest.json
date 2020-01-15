@@ -1,0 +1,8 @@
+{
+  "domain": "metro_lisboa",
+  "name": "Metro Lisboa",
+  "documentation": "",
+  "dependencies": [],
+  "codeowners": ["@dpjrodrigues"],
+  "requirements": ["pyUnderLX==1.0.1"]
+}

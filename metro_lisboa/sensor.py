@@ -18,8 +18,6 @@ from homeassistant.helpers.entity import Entity
 from homeassistant.util import Throttle
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
-REQUIREMENTS = ['pyUnderLX==1.0.1']
-
 _LOGGER = logging.getLogger(__name__)
 
 ATTRIBUTION = "Powered by UnderLX"
