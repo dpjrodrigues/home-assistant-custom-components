@@ -100,7 +100,7 @@ class CTTSensor(Entity):
         return self.ICON
 
     @property
-    def device_state_attributes(self):
+    def extra_state_attributes(self):
         """Return other details about the sensor state."""
         attrs = {}
 
@@ -116,7 +116,7 @@ class CTTSensor(Entity):
         from pyCTT import Items
 
         websession = async_get_clientsession(self.hass)
-        with async_timeout.timeout(10, loop=self.hass.loop):          
+        with async_timeout.timeout(10):          
             data = await Items.get(websession,self._tracking_ids)
 
         self._not_delivered = await data.number_of_items_not_delivered()
