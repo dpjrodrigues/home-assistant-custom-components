@@ -43,7 +43,7 @@ async def async_setup_platform(hass, config, add_entities, discovery_info=None):
     from pyUnderLX import Occurrences
 
     websession = async_get_clientsession(hass)
-    with async_timeout.timeout(10, loop=hass.loop):
+    with async_timeout.timeout(10):
         data = await Occurrences.get(websession)
 
     sensors = []
@@ -93,7 +93,7 @@ class MetroLisboaSensor(Entity):
         return self.ICON
 
     @property
-    def device_state_attributes(self):
+    def extra_state_attributes(self):
         """Return other details about the sensor state."""
         attrs = {}
         details_attr = {}
@@ -109,7 +109,7 @@ class MetroLisboaSensor(Entity):
     @Throttle(SCAN_INTERVAL)
     async def async_update(self):
         """Update the sensor."""
-        with async_timeout.timeout(10, loop=self.hass.loop):
+        with async_timeout.timeout(10):
             self._occurences = await self._data.ongoing()
             self._num_occurrences = await self._data.number_of_occurrences(METRO_LINES[self._name])
             if self._num_occurrences > 0:

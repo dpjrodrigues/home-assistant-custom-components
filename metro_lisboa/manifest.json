@@ -4,5 +4,6 @@
   "documentation": "",
   "dependencies": [],
   "codeowners": ["@dpjrodrigues"],
-  "requirements": ["pyUnderLX==1.0.1"]
+  "requirements": ["pyUnderLX==1.0.1"],
+  "version": "1.0.1"
 }
