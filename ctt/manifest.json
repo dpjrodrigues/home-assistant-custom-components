@@ -1,5 +1,5 @@
 {
-  "domain": "CTT",
+  "domain": "ctt",
   "name": "CTT tracker",
   "documentation": "",
   "dependencies": ["input_text"],
