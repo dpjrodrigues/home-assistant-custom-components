@@ -4,5 +4,6 @@
   "documentation": "",
   "dependencies": ["input_text"],
   "codeowners": ["@dpjrodrigues"],
-  "requirements": ["pyCTT==1.0.1"]
+  "requirements": ["pyCTT==1.0.1"],
+  "version": "1.0.1"
 }
