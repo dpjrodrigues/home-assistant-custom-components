@@ -107,7 +107,7 @@ class CTTSensor(Entity):
         attrs["Number of Items Delivered"] = self._delivered
         attrs["Number of Items Not Delivered"] = self._not_delivered
         for item in self._details:
-            attrs[item.id]=item.state+" at "+item.date+" "+item.hour
+            attrs[item.id[0:13]]=item.state+" at "+item.date+" "+item.hour
         return attrs
 
     #@Throttle(SCAN_INTERVAL)
